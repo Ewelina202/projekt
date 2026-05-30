@@ -276,6 +276,7 @@ def pokaz_program():
     global entry_szukaj_pracownikow
     global button_dodaj
 
+
     root = Tk()
     root.title("System zarządzania stacjami radiowymi")
     root.geometry("1100x760")
