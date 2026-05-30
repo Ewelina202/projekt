@@ -33,8 +33,6 @@ class Obiekt:
     def get_coordinates(self):
         tekst = self.lokalizacja.strip()
 
-        # Próba sprawdzenia, czy użytkownik wpisał współrzędne
-        # np. 52.2297, 21.0122
         if "," in tekst:
             try:
                 dane = tekst.split(",")
@@ -44,7 +42,7 @@ class Obiekt:
             except:
                 pass
 
-        # Jeśli to nie były współrzędne, program traktuje tekst jako miejscowość
+# Jeśli to nie były współrzędne, aplikacja systemu potrakuje je jako nazwa miejscowości tak jak było na org projekciel.
         lokalizacja_url = tekst.replace(" ", "_")
         url = f"https://pl.wikipedia.org/wiki/{lokalizacja_url}"
 
@@ -62,8 +60,7 @@ class Klient:
         self.nazwa = nazwa
         self.rozglosnia = rozglosnia
 
-
-# LOGOWANIE DO SYSTEMU (DODATKOWE)
+# LOGOWANIE DO SYSTEMU
 
 def zaloguj():
     if entry_login.get() == "admin" and entry_haslo.get() == "admin":
@@ -73,7 +70,7 @@ def zaloguj():
         messagebox.showerror("Błąd", "Niepoprawny login lub hasło")
 
 
-# -------------------- WYBÓR MODUŁU --------------------
+# 1) wybory hahah
 
 def wybierz_placowki():
     global aktualna_lista, aktualny_typ, edytowany_indeks
@@ -111,7 +108,7 @@ def wybierz_pracownikow():
     wyczysc_formularz()
 
 
-# -------------------- DODAWANIE, USUWANIE, EDYCJA --------------------
+# - DODAWANIE, USUWANIE, EDYCJA -
 
 def pokaz_liste():
     listbox_obiekty.delete(0, END)
@@ -126,7 +123,7 @@ def dodaj_obiekt():
     lokalizacja = entry_lokalizacja.get()
 
     if nazwa == "" or firma == "" or lokalizacja == "":
-        messagebox.showwarning("Brak danych", "Uzupełnij nazwę, firmę/rozgłośnię i współrzędne")
+        messagebox.showwarning("Brak danych", "Uzupełnij nazwę, firmę/rozgłośnię i współrzędne lub nazwę miejscowości")
         return
 
     try:
@@ -135,7 +132,7 @@ def dodaj_obiekt():
         pokaz_liste()
         wyczysc_formularz()
     except ValueError:
-        messagebox.showerror("Błąd", "Współrzędne muszą być liczbami")
+        messagebox.showerror("Błąd", "Wpisz poprawną nazwę miejscowości albo współrzędne, np. 52.2297,21.0122")
 
 
 def usun_obiekt():
@@ -196,7 +193,7 @@ def zapisz_zmiany():
         pokaz_liste()
         wyczysc_formularz()
     except ValueError:
-        messagebox.showerror("Błąd", "Współrzędne muszą być liczbami")
+        messagebox.showerror("Błąd", "Wpisz poprawną nazwę miejscowości albo współrzędne, np. 52.2297,21.0122")
 
 
 def pokaz_szczegoly():
@@ -340,11 +337,6 @@ def pokaz_program():
     map_widget.set_zoom(6)
     map_widget.grid(row=0, column=0)
 
-    # # SZCZEGÓŁY
-    # Label(ramka_szczegoly, text="Szczegóły zaznaczonego obiektu:").grid(row=0, column=0, sticky=W)
-    # label_szczegoly = Label(ramka_szczegoly, text="...", justify=LEFT)
-    # label_szczegoly.grid(row=1, column=0, sticky=W)
-
     # KLIENCI
     Label(ramka_klienci, text="Klienci wybranej rozgłośni").grid(row=0, column=0, columnspan=2)
     listbox_klienci = Listbox(ramka_klienci, width=45, height=7)
@@ -375,12 +367,6 @@ def pokaz_program():
     entry_szukaj_pracownikow.grid(row=2, column=1)
     Button(ramka_pracownicy, text="Pokaż pracowników", command=pokaz_pracownikow_firmy).grid(row=3, column=0, columnspan=2)
 
-    # # Proste dane startowe, żeby było od razu coś widać w programie
-    # placowki.append(Obiekt("Centrala Warszawa", "Radio Warszawa", "ul. Radiowa 1", 52.2297, 21.0122, "Placówka"))
-    # nadajniki.append(Obiekt("Nadajnik Warszawa", "Radio Warszawa", "101.5 FM", 52.2400, 21.0000, "Nadajnik"))
-    # pracownicy.append(Obiekt("Jan Kowalski", "Radio Warszawa", "Prezenter", 52.2500, 21.0200, "Pracownik"))
-    # klienci.append(Klient("Firma Alfa", "Radio Warszawa"))
-
     pokaz_liste()
     pokaz_klientow()
     pokaz_pracownikow_firmy()
@@ -407,6 +393,6 @@ entry_haslo.grid(row=2, column=1)
 Button(okno_logowania, text="Zaloguj", command=zaloguj).grid(row=3, column=0, columnspan=2, pady=10)
 
 entry_login.insert(0, "admin")
-entry_haslo.insert(0, "admin")
+entry_haslo.insert(0, "")
 
 okno_logowania.mainloop()
