@@ -56,9 +56,10 @@ class Obiekt:
 
 
 class Klient:
-    def __init__(self, nazwa, rozglosnia):
+    def __init__(self, nazwa, rozglosnia, usluga):
         self.nazwa = nazwa
         self.rozglosnia = rozglosnia
+        self.usluga=usluga
 
 # LOGOWANIE DO SYSTEMU
 
@@ -225,19 +226,22 @@ def wyczysc_formularz():
     entry_lokalizacja.delete(0, END)
 
 
-# -------------------- KLIENCI ROZGŁOŚNI --------------------
+# Punkt 4 KLIENCI wybranej ROZGŁOŚNI
 
 def dodaj_klienta():
     nazwa = entry_klient.get()
     rozglosnia = entry_klient_rozglosnia.get()
+    usluga=entry_klient_usluga.get()
 
-    if nazwa == "" or rozglosnia == "":
-        messagebox.showwarning("Brak danych", "Podaj nazwę klienta i rozgłośnię")
+    if nazwa == "" or rozglosnia == "" or usluga == "":
+        messagebox.showwarning("Brak danych", "Podaj nazwę klienta, rozgłośnię i rodzaj reklamy/usługi")
         return
 
-    klienci.append(Klient(nazwa, rozglosnia))
+    klienci.append(Klient(nazwa, rozglosnia,usluga))
     entry_klient.delete(0, END)
     entry_klient_rozglosnia.delete(0, END)
+    entry_klient_usluga.delete(0, END)
+
     pokaz_klientow()
 
 
@@ -247,7 +251,7 @@ def pokaz_klientow():
 
     for klient in klienci:
         if szukana_rozglosnia == "" or klient.rozglosnia == szukana_rozglosnia:
-            listbox_klienci.insert(END, f"{klient.nazwa} - {klient.rozglosnia}")
+            listbox_klienci.insert(END, f"{klient.nazwa} - {klient.rozglosnia} - {klient.usluga}")
 
 
 # -------------------- PRACOWNICY WYBRANEJ FIRMY --------------------
@@ -268,7 +272,7 @@ def pokaz_program():
     global label_lista, label_opis, label_szczegoly
     global listbox_obiekty, listbox_klienci, listbox_pracownicy_firmy
     global entry_nazwa, entry_firma, entry_opis, entry_lokalizacja
-    global entry_klient, entry_klient_rozglosnia, entry_szukaj_klientow
+    global entry_klient, entry_klient_rozglosnia, entry_klient_usluga, entry_szukaj_klientow
     global entry_szukaj_pracownikow
     global button_dodaj
 
@@ -342,7 +346,7 @@ def pokaz_program():
     listbox_klienci = Listbox(ramka_klienci, width=45, height=7)
     listbox_klienci.grid(row=1, column=0, columnspan=2)
 
-    Label(ramka_klienci, text="Klient:").grid(row=2, column=0)
+    Label(ramka_klienci, text="Nazwa klienta/firmy:").grid(row=2, column=0)
     entry_klient = Entry(ramka_klienci)
     entry_klient.grid(row=2, column=1)
 
@@ -350,12 +354,16 @@ def pokaz_program():
     entry_klient_rozglosnia = Entry(ramka_klienci)
     entry_klient_rozglosnia.grid(row=3, column=1)
 
-    Button(ramka_klienci, text="Dodaj klienta", command=dodaj_klienta).grid(row=4, column=0, columnspan=2)
+    Label(ramka_klienci, text="Rodzaj reklamy/usługi:").grid(row=4, column=0)
+    entry_klient_usluga = Entry(ramka_klienci)
+    entry_klient_usluga.grid(row=4, column=1)
 
-    Label(ramka_klienci, text="Pokaż klientów rozgłośni:").grid(row=5, column=0)
+    Button(ramka_klienci, text="Dodaj klienta", command=dodaj_klienta).grid(row=5, column=0, columnspan=2)
+
+    Label(ramka_klienci, text="Pokaż klientów rozgłośni:").grid(row=6, column=0)
     entry_szukaj_klientow = Entry(ramka_klienci)
-    entry_szukaj_klientow.grid(row=5, column=1)
-    Button(ramka_klienci, text="Pokaż", command=pokaz_klientow).grid(row=6, column=0, columnspan=2)
+    entry_szukaj_klientow.grid(row=6, column=1)
+    Button(ramka_klienci, text="Pokaż", command=pokaz_klientow).grid(row=7, column=0, columnspan=2)
 
     # PRACOWNICY FIRMY
     Label(ramka_pracownicy, text="Pracownicy wybranej firmy").grid(row=0, column=0, columnspan=2)
