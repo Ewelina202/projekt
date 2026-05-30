@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 users: list = []
 
 
+
 class User:
     def __init__(self, imie: str, nazwisko: str, posty: int, lokalizacja: str):
         self.imie = imie
