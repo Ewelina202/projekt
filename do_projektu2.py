@@ -42,7 +42,6 @@ class Obiekt:
             except:
                 pass
 
-# Jeśli to nie były współrzędne, aplikacja systemu potrakuje je jako nazwa miejscowości tak jak było na org projekciel.
         lokalizacja_url = tekst.replace(" ", "_")
         url = f"https://pl.wikipedia.org/wiki/{lokalizacja_url}"
 
@@ -59,9 +58,8 @@ class Klient:
     def __init__(self, nazwa, rozglosnia, usluga):
         self.nazwa = nazwa
         self.rozglosnia = rozglosnia
-        self.usluga=usluga
+        self.usluga = usluga
 
-# LOGOWANIE DO SYSTEMU
 
 def zaloguj():
     if entry_login.get() == "admin" and entry_haslo.get() == "admin":
@@ -70,8 +68,6 @@ def zaloguj():
     else:
         messagebox.showerror("Błąd", "Niepoprawny login lub hasło")
 
-
-# 1) wybory hahah
 
 def wybierz_placowki():
     global aktualna_lista, aktualny_typ, edytowany_indeks
@@ -108,8 +104,6 @@ def wybierz_pracownikow():
     pokaz_liste()
     wyczysc_formularz()
 
-
-# - DODAWANIE, USUWANIE, EDYCJA -
 
 def pokaz_liste():
     listbox_obiekty.delete(0, END)
@@ -217,6 +211,8 @@ def pokaz_szczegoly():
              f"Współrzędne: {obiekt.coordinates[0]}, {obiekt.coordinates[1]}"
     )
 
+    usun_wszystkie_markery()
+    pokaz_marker_obiektu(obiekt)
     map_widget.set_position(obiekt.coordinates[0], obiekt.coordinates[1])
     map_widget.set_zoom(13)
 
@@ -228,23 +224,22 @@ def wyczysc_formularz():
     entry_lokalizacja.delete(0, END)
 
 
-# Punkt 4 KLIENCI wybranej ROZGŁOŚNI
-
 def dodaj_klienta():
     nazwa = entry_klient.get()
     rozglosnia = entry_klient_rozglosnia.get()
-    usluga=entry_klient_usluga.get()
+    usluga = entry_klient_usluga.get()
 
     if nazwa == "" or rozglosnia == "" or usluga == "":
         messagebox.showwarning("Brak danych", "Podaj nazwę klienta, rozgłośnię i rodzaj reklamy/usługi")
         return
 
-    klienci.append(Klient(nazwa, rozglosnia,usluga))
+    klienci.append(Klient(nazwa, rozglosnia, usluga))
     entry_klient.delete(0, END)
     entry_klient_rozglosnia.delete(0, END)
     entry_klient_usluga.delete(0, END)
 
     pokaz_klientow()
+
 
 def usun_wszystkie_markery():
     for lista in [placowki, nadajniki, pracownicy]:
@@ -269,6 +264,7 @@ def pokaz_wszystkie_markery():
         for obiekt in lista:
             pokaz_marker_obiektu(obiekt)
 
+
 def pokaz_klientow():
     listbox_klienci.delete(0, END)
     szukana_rozglosnia = entry_szukaj_klientow.get()
@@ -277,8 +273,6 @@ def pokaz_klientow():
         if szukana_rozglosnia == "" or klient.rozglosnia == szukana_rozglosnia:
             listbox_klienci.insert(END, f"{klient.nazwa} - {klient.rozglosnia} - {klient.usluga}")
 
-
-# -------------------- PRACOWNICY WYBRANEJ FIRMY --------------------
 
 def pokaz_pracownikow_firmy():
     listbox_pracownicy_firmy.delete(0, END)
@@ -297,10 +291,7 @@ def pokaz_pracownikow_firmy():
         opis = pracownik.opis.strip().lower()
 
         if szukany_tekst == "" or szukany_tekst in nazwa or szukany_tekst in firma or szukany_tekst in opis:
-            listbox_pracownicy_firmy.insert(
-                END,
-                f"{pracownik.nazwa} - {pracownik.firma} - {pracownik.opis}"
-            )
+            listbox_pracownicy_firmy.insert(END, f"{pracownik.nazwa} - {pracownik.firma} - {pracownik.opis}")
 
             znalezieni_pracownicy.append(pracownik)
 
@@ -315,110 +306,27 @@ def pokaz_pracownikow_firmy():
     if len(znalezieni_pracownicy) == 0 and szukany_tekst != "":
         messagebox.showinfo("Brak wyników", "Nie znaleziono pracownika pasującego do wpisanego tekstu")
 
+
 def dodaj_przykladowe_dane():
-    # Jeśli dane już istnieją, nie dodawaj ich drugi raz
     if placowki or nadajniki or pracownicy or klienci:
         return
 
-    # -------------------- PRZYKŁADOWE PLACÓWKI / ROZGŁOŚNIE --------------------
+    placowki.append(Obiekt("Siedziba Radio Fala Warszawa", "Radio Fala", "Główna siedziba rozgłośni", "52.2297,21.0122", "Placówka"))
+    placowki.append(Obiekt("Oddział Radio Echo Kraków", "Radio Echo", "Oddział regionalny rozgłośni", "50.0647,19.9450", "Placówka"))
+    placowki.append(Obiekt("Biuro Radio Puls Poznań", "Radio Puls", "Biuro reklamy i kontaktu z klientami", "52.4064,16.9252", "Placówka"))
 
-    placowki.append(Obiekt(
-        "Siedziba Radio Fala Warszawa",
-        "Radio Fala",
-        "Główna siedziba rozgłośni",
-        "52.2297,21.0122",
-        "Placówka"
-    ))
+    nadajniki.append(Obiekt("Nadajnik Warszawa Centrum", "Radio Fala", "Częstotliwość 98.4 FM", "52.2390,21.3200", "Nadajnik"))
+    nadajniki.append(Obiekt("Nadajnik Kraków Północ", "Radio Echo", "Częstotliwość 101.2 FM", "50.9760,19.9565", "Nadajnik"))
+    nadajniki.append(Obiekt("Nadajnik Poznań Zachód", "Radio Puls", "Częstotliwość 94.7 FM", "52.0500,16.9100", "Nadajnik"))
 
-    placowki.append(Obiekt(
-        "Oddział Radio Echo Kraków",
-        "Radio Echo",
-        "Oddział regionalny rozgłośni",
-        "50.0647,19.9450",
-        "Placówka"
-    ))
+    pracownicy.append(Obiekt("Anna Kowalska", "Radio Fala", "Prezenterka poranna", "52.8097,21.0122", "Pracownik"))
+    pracownicy.append(Obiekt("Marek Nowak", "Radio Fala", "Realizator dźwięku", "52.5310,21.5150", "Pracownik"))
+    pracownicy.append(Obiekt("Julia Wiśniewska", "Radio Echo", "Specjalistka ds. reklamy", "50.8047,19.9450", "Pracownik"))
 
-    placowki.append(Obiekt(
-        "Biuro Radio Puls Poznań",
-        "Radio Puls",
-        "Biuro reklamy i kontaktu z klientami",
-        "52.4064,16.9252",
-        "Placówka"
-    ))
+    klienci.append(Klient("Kawiarnia Słodka Fala", "Radio Fala", "Reklama lokalu gastronomicznego"))
+    klienci.append(Klient("Salon AutoMax", "Radio Fala", "Spot reklamowy 30 sekund"))
+    klienci.append(Klient("Firma Bud-Mix", "Radio Echo", "Ogłoszenie sponsorowane"))
 
-    # -------------------- PRZYKŁADOWE NADAJNIKI --------------------
-
-    nadajniki.append(Obiekt(
-        "Nadajnik Warszawa Centrum",
-        "Radio Fala",
-        "Częstotliwość 98.4 FM",
-        "52.2390,21.3200",
-        "Nadajnik"
-    ))
-
-    nadajniki.append(Obiekt(
-        "Nadajnik Kraków Północ",
-        "Radio Echo",
-        "Częstotliwość 101.2 FM",
-        "50.9760,19.9565",
-        "Nadajnik"
-    ))
-
-    nadajniki.append(Obiekt(
-        "Nadajnik Poznań Zachód",
-        "Radio Puls",
-        "Częstotliwość 94.7 FM",
-        "52.0500,16.9100",
-        "Nadajnik"
-    ))
-
-    # -------------------- PRZYKŁADOWI PRACOWNICY --------------------
-
-    pracownicy.append(Obiekt(
-        "Anna Kowalska",
-        "Radio Fala",
-        "Prezenterka poranna",
-        "52.8097,21.0122",
-        "Pracownik"
-    ))
-
-    pracownicy.append(Obiekt(
-        "Marek Nowak",
-        "Radio Fala",
-        "Realizator dźwięku",
-        "52.5310,21.5150",
-        "Pracownik"
-    ))
-
-    pracownicy.append(Obiekt(
-        "Julia Wiśniewska",
-        "Radio Echo",
-        "Specjalistka ds. reklamy",
-        "50.8047,19.9450",
-        "Pracownik"
-    ))
-
-    # -------------------- PRZYKŁADOWI KLIENCI --------------------
-
-    klienci.append(Klient(
-        "Kawiarnia Słodka Fala",
-        "Radio Fala",
-        "Reklama lokalu gastronomicznego"
-    ))
-
-    klienci.append(Klient(
-        "Salon AutoMax",
-        "Radio Fala",
-        "Spot reklamowy 30 sekund"
-    ))
-
-    klienci.append(Klient(
-        "Firma Bud-Mix",
-        "Radio Echo",
-        "Ogłoszenie sponsorowane"
-    ))
-
-# -------------------- GŁÓWNE OKNO PROGRAMU --------------------
 
 def pokaz_program():
     global root, map_widget
@@ -428,7 +336,6 @@ def pokaz_program():
     global entry_klient, entry_klient_rozglosnia, entry_klient_usluga, entry_szukaj_klientow
     global entry_szukaj_pracownikow
     global button_dodaj
-
 
     root = Tk()
     root.title("System zarządzania stacjami radiowymi")
@@ -450,13 +357,11 @@ def pokaz_program():
     ramka_klienci.grid(row=4, column=0, sticky=N)
     ramka_pracownicy.grid(row=4, column=1, sticky=N)
 
-    # MENU
     Label(ramka_menu, text="Wybierz moduł").grid(row=0, column=0)
     Button(ramka_menu, text="Placówki rozgłośni", width=25, command=wybierz_placowki).grid(row=1, column=0)
     Button(ramka_menu, text="Nadajniki radiowe", width=25, command=wybierz_nadajniki).grid(row=2, column=0)
     Button(ramka_menu, text="Pracownicy", width=25, command=wybierz_pracownikow).grid(row=3, column=0)
 
-    # LISTA
     label_lista = Label(ramka_lista, text="Lista placówek rozgłośni")
     label_lista.grid(row=0, column=0, columnspan=3)
 
@@ -467,9 +372,10 @@ def pokaz_program():
     Button(ramka_lista, text="Usuń", command=usun_obiekt).grid(row=2, column=1)
     Button(ramka_lista, text="Edytuj", command=edytuj_obiekt).grid(row=2, column=2)
 
-    # FORMULARZ
-    Label(ramka_formularz, text="Formularz").grid(row=0, column=0, columnspan=2)
+    label_szczegoly = Label(ramka_szczegoly, text="Szczegóły obiektu", justify=LEFT)
+    label_szczegoly.grid(row=0, column=0, sticky=W)
 
+    Label(ramka_formularz, text="Formularz").grid(row=0, column=0, columnspan=2)
     Label(ramka_formularz, text="Nazwa:").grid(row=1, column=0, sticky=E)
     Label(ramka_formularz, text="Rozgłośnia / firma:").grid(row=2, column=0, sticky=E)
     label_opis = Label(ramka_formularz, text="Adres placówki:")
@@ -489,7 +395,6 @@ def pokaz_program():
     button_dodaj = Button(ramka_formularz, text="Dodaj", width=20, command=dodaj_obiekt)
     button_dodaj.grid(row=6, column=0, columnspan=2)
 
-    # MAPA
     map_widget = tkintermapview.TkinterMapView(ramka_mapa, width=700, height=480, corner_radius=4)
     map_widget.set_position(52.2, 21.0)
     map_widget.set_zoom(6)
@@ -497,7 +402,6 @@ def pokaz_program():
 
     dodaj_przykladowe_dane()
 
-    # KLIENCI
     Label(ramka_klienci, text="Klienci wybranej rozgłośni").grid(row=0, column=0, columnspan=2)
     listbox_klienci = Listbox(ramka_klienci, width=45, height=7)
     listbox_klienci.grid(row=1, column=0, columnspan=2)
@@ -519,9 +423,9 @@ def pokaz_program():
     Label(ramka_klienci, text="Pokaż klientów rozgłośni:").grid(row=6, column=0)
     entry_szukaj_klientow = Entry(ramka_klienci)
     entry_szukaj_klientow.grid(row=6, column=1)
+
     Button(ramka_klienci, text="Pokaż", command=pokaz_klientow).grid(row=7, column=0, columnspan=2)
 
-    # PRACOWNICY FIRMY
     Label(ramka_pracownicy, text="Pracownicy wybranej firmy").grid(row=0, column=0, columnspan=2)
     listbox_pracownicy_firmy = Listbox(ramka_pracownicy, width=45, height=7)
     listbox_pracownicy_firmy.grid(row=1, column=0, columnspan=2)
@@ -529,6 +433,7 @@ def pokaz_program():
     Label(ramka_pracownicy, text="Firma / rozgłośnia:").grid(row=2, column=0)
     entry_szukaj_pracownikow = Entry(ramka_pracownicy)
     entry_szukaj_pracownikow.grid(row=2, column=1)
+
     Button(ramka_pracownicy, text="Pokaż pracowników", command=pokaz_pracownikow_firmy).grid(row=3, column=0, columnspan=2)
 
     pokaz_liste()
@@ -537,8 +442,6 @@ def pokaz_program():
 
     root.mainloop()
 
-
-# -------------------- OKNO LOGOWANIA --------------------
 
 okno_logowania = Tk()
 okno_logowania.title("Logowanie")
