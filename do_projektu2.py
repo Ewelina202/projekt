@@ -143,7 +143,8 @@ def usun_obiekt():
         return
 
     indeks = zaznaczenie[0]
-    aktualna_lista[indeks].marker.delete()
+    if aktualna_lista[indeks].marker is not None:
+        aktualna_lista[indeks].marker.delete()
     aktualna_lista.pop(indeks)
     pokaz_liste()
 
@@ -182,7 +183,8 @@ def zapisz_zmiany():
         obiekt.lokalizacja = entry_lokalizacja.get()
         obiekt.coordinates = obiekt.get_coordinates()
 
-        obiekt.marker.delete()
+        if obiekt.marker is not None:
+            obiekt.marker.delete()
         obiekt.marker = map_widget.set_marker(
             obiekt.coordinates[0],
             obiekt.coordinates[1],
@@ -244,6 +246,28 @@ def dodaj_klienta():
 
     pokaz_klientow()
 
+def usun_wszystkie_markery():
+    for lista in [placowki, nadajniki, pracownicy]:
+        for obiekt in lista:
+            if obiekt.marker is not None:
+                obiekt.marker.delete()
+                obiekt.marker = None
+
+
+def pokaz_marker_obiektu(obiekt):
+    obiekt.marker = map_widget.set_marker(
+        obiekt.coordinates[0],
+        obiekt.coordinates[1],
+        text=obiekt.nazwa
+    )
+
+
+def pokaz_wszystkie_markery():
+    usun_wszystkie_markery()
+
+    for lista in [placowki, nadajniki, pracownicy]:
+        for obiekt in lista:
+            pokaz_marker_obiektu(obiekt)
 
 def pokaz_klientow():
     listbox_klienci.delete(0, END)
@@ -258,12 +282,141 @@ def pokaz_klientow():
 
 def pokaz_pracownikow_firmy():
     listbox_pracownicy_firmy.delete(0, END)
-    szukana_firma = entry_szukaj_pracownikow.get()
+    szukany_tekst = entry_szukaj_pracownikow.get().strip().lower()
+
+    znalezieni_pracownicy = []
+
+    if szukany_tekst == "":
+        pokaz_wszystkie_markery()
+    else:
+        usun_wszystkie_markery()
 
     for pracownik in pracownicy:
-        if szukana_firma == "" or pracownik.firma == szukana_firma:
-            listbox_pracownicy_firmy.insert(END, f"{pracownik.nazwa} - {pracownik.firma} - {pracownik.opis}")
+        nazwa = pracownik.nazwa.strip().lower()
+        firma = pracownik.firma.strip().lower()
+        opis = pracownik.opis.strip().lower()
 
+        if szukany_tekst == "" or szukany_tekst in nazwa or szukany_tekst in firma or szukany_tekst in opis:
+            listbox_pracownicy_firmy.insert(
+                END,
+                f"{pracownik.nazwa} - {pracownik.firma} - {pracownik.opis}"
+            )
+
+            znalezieni_pracownicy.append(pracownik)
+
+            if szukany_tekst != "":
+                pokaz_marker_obiektu(pracownik)
+
+    if len(znalezieni_pracownicy) == 1:
+        pracownik = znalezieni_pracownicy[0]
+        map_widget.set_position(pracownik.coordinates[0], pracownik.coordinates[1])
+        map_widget.set_zoom(13)
+
+    if len(znalezieni_pracownicy) == 0 and szukany_tekst != "":
+        messagebox.showinfo("Brak wyników", "Nie znaleziono pracownika pasującego do wpisanego tekstu")
+
+def dodaj_przykladowe_dane():
+    # Jeśli dane już istnieją, nie dodawaj ich drugi raz
+    if placowki or nadajniki or pracownicy or klienci:
+        return
+
+    # -------------------- PRZYKŁADOWE PLACÓWKI / ROZGŁOŚNIE --------------------
+
+    placowki.append(Obiekt(
+        "Siedziba Radio Fala Warszawa",
+        "Radio Fala",
+        "Główna siedziba rozgłośni",
+        "52.2297,21.0122",
+        "Placówka"
+    ))
+
+    placowki.append(Obiekt(
+        "Oddział Radio Echo Kraków",
+        "Radio Echo",
+        "Oddział regionalny rozgłośni",
+        "50.0647,19.9450",
+        "Placówka"
+    ))
+
+    placowki.append(Obiekt(
+        "Biuro Radio Puls Poznań",
+        "Radio Puls",
+        "Biuro reklamy i kontaktu z klientami",
+        "52.4064,16.9252",
+        "Placówka"
+    ))
+
+    # -------------------- PRZYKŁADOWE NADAJNIKI --------------------
+
+    nadajniki.append(Obiekt(
+        "Nadajnik Warszawa Centrum",
+        "Radio Fala",
+        "Częstotliwość 98.4 FM",
+        "52.2390,21.3200",
+        "Nadajnik"
+    ))
+
+    nadajniki.append(Obiekt(
+        "Nadajnik Kraków Północ",
+        "Radio Echo",
+        "Częstotliwość 101.2 FM",
+        "50.9760,19.9565",
+        "Nadajnik"
+    ))
+
+    nadajniki.append(Obiekt(
+        "Nadajnik Poznań Zachód",
+        "Radio Puls",
+        "Częstotliwość 94.7 FM",
+        "52.0500,16.9100",
+        "Nadajnik"
+    ))
+
+    # -------------------- PRZYKŁADOWI PRACOWNICY --------------------
+
+    pracownicy.append(Obiekt(
+        "Anna Kowalska",
+        "Radio Fala",
+        "Prezenterka poranna",
+        "52.8097,21.0122",
+        "Pracownik"
+    ))
+
+    pracownicy.append(Obiekt(
+        "Marek Nowak",
+        "Radio Fala",
+        "Realizator dźwięku",
+        "52.5310,21.5150",
+        "Pracownik"
+    ))
+
+    pracownicy.append(Obiekt(
+        "Julia Wiśniewska",
+        "Radio Echo",
+        "Specjalistka ds. reklamy",
+        "50.8047,19.9450",
+        "Pracownik"
+    ))
+
+    # -------------------- PRZYKŁADOWI KLIENCI --------------------
+
+    klienci.append(Klient(
+        "Kawiarnia Słodka Fala",
+        "Radio Fala",
+        "Reklama lokalu gastronomicznego"
+    ))
+
+    klienci.append(Klient(
+        "Salon AutoMax",
+        "Radio Fala",
+        "Spot reklamowy 30 sekund"
+    ))
+
+    klienci.append(Klient(
+        "Firma Bud-Mix",
+        "Radio Echo",
+        "Ogłoszenie sponsorowane"
+    ))
 
 # -------------------- GŁÓWNE OKNO PROGRAMU --------------------
 
@@ -341,6 +494,8 @@ def pokaz_program():
     map_widget.set_position(52.2, 21.0)
     map_widget.set_zoom(6)
     map_widget.grid(row=0, column=0)
+
+    dodaj_przykladowe_dane()
 
     # KLIENCI
     Label(ramka_klienci, text="Klienci wybranej rozgłośni").grid(row=0, column=0, columnspan=2)
