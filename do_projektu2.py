@@ -449,6 +449,7 @@ okno_logowania.geometry("300x160")
 
 Label(okno_logowania, text="Logowanie do systemu").grid(row=0, column=0, columnspan=2, pady=10)
 
+
 Label(okno_logowania, text="Login:").grid(row=1, column=0)
 entry_login = Entry(okno_logowania)
 entry_login.grid(row=1, column=1)
